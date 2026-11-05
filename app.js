@@ -781,8 +781,9 @@ function formatRemarkPct(pct) {
 function paintRemark(pct) {
   const remark = remarkFor(pct);
   const mobile = window.matchMedia("(max-width: 720px)").matches;
+  const shown = mobile && remark === "Incroyable !! C'est très fort." ? "Incroyable !!" : remark;
   ui.dockRemark.textContent = mobile
-    ? `${remark.replace(/\.$/, "")} (${formatRemarkPct(pct)})`
+    ? `${shown.replace(/\.$/, "")} (${formatRemarkPct(pct)})`
     : remark;
   ui.dockScore.hidden = false;
   ui.dockScore.textContent = formatSigned(pct);
