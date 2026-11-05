@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
+  <title>À grande échelle</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="style.css?v=25">
+</head>
+<body>
+  <div id="load-overlay" role="status" aria-live="polite" aria-busy="true" aria-label="Chargement">
+    <div class="load-card">
+      <p class="load-text" id="load-text">Ça carto-charge…</p>
+      <div class="load-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="load-bar-fill" class="load-bar-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="intro-modal" class="intro-modal" hidden role="dialog" aria-modal="true" aria-labelledby="intro-title">
+    <div class="intro-card">
+      <h1 id="intro-title">À grande échelle</h1>
+      <p class="lead" id="intro-lead">Saurez-vous remettre le pays à la bonne taille ?</p>
+
+      <p class="field-label">Territoire</p>
+      <div class="choice-grid" role="group" aria-label="Territoire">
+        <button type="button" data-territory="world" aria-pressed="true">Pays du monde</button>
+        <button type="button" data-territory="us" aria-pressed="false">États-Unis</button>
+      </div>
+
+      <p class="field-label">Partie</p>
+      <div class="mode-switch" role="group" aria-label="Longueur de la partie">
+        <button type="button" data-length="5" aria-pressed="true">5 manches</button>
+        <button type="button" data-length="10" aria-pressed="false">10 manches</button>
+      </div>
+
+      <p class="field-label">Rythme</p>
+      <div class="mode-switch pace-switch" role="group" aria-label="Rythme">
+        <button type="button" data-ms="20000" aria-pressed="true">À la cool</button>
+        <button type="button" data-ms="10000" aria-pressed="false">Stressant</button>
+        <button type="button" data-ms="5000" aria-pressed="false">Super stressant</button>
+      </div>
+      <p class="mode-note" id="rules-note">20 secondes par manche. Le plus petit score gagne.</p>
+
+      <button type="button" id="btn-start" class="btn-primary">Je me lance</button>
+    </div>
+  </div>
+
+  <div id="timer-block" class="timer-block" hidden aria-label="Temps restant">
+    <div id="timer-bar" class="timer-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+      <div id="timer-fill" class="timer-fill">
+        <span class="timer-value" id="timer-value">20 s</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="play" hidden>
+    <header id="chrome">
+      <p class="round-meta" id="round-kicker">Manche 1 / 5</p>
+    </header>
+
+    <aside id="history-wrap" class="score-history-wrap" aria-label="Votre partie">
+      <p class="score-history-heading">Votre partie</p>
+      <ul id="history" class="score-history"></ul>
+    </aside>
+
+    <div id="stage">
+      <div class="compare">
+        <div class="shelf" id="shelf-ref">
+          <div class="ground" aria-hidden="true"></div>
+          <div class="slot" id="slot-ref">
+            <svg class="sil" viewBox="0 0 100 100" role="img" aria-labelledby="name-ref">
+              <path id="path-ref" fill-rule="evenodd"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="shelf" id="shelf-target">
+          <div class="ground" aria-hidden="true"></div>
+          <div class="slot" id="slot-target">
+            <div class="scaler" id="truth-scaler" hidden>
+              <svg class="sil" viewBox="0 0 100 100" aria-hidden="true">
+                <path id="path-truth-halo" fill-rule="evenodd"></path>
+                <path id="path-truth" fill-rule="evenodd"></path>
+              </svg>
+            </div>
+            <p id="truth-tip" class="truth-tip" hidden>Taille réelle</p>
+            <p id="resize-tip" class="truth-tip resize-tip" hidden></p>
+            <div class="scaler" id="guess-scaler">
+              <svg class="sil" viewBox="0 0 100 100" role="img" aria-labelledby="name-target">
+                <rect class="hit" x="0" y="0" width="100" height="100"></rect>
+                <path id="path-guess" fill-rule="evenodd"></path>
+              </svg>
+            </div>
+            <button type="button" class="handle" data-corner="nw" aria-label="Réduire ou agrandir"></button>
+            <button type="button" class="handle" data-corner="ne" aria-label="Réduire ou agrandir"></button>
+            <button type="button" class="handle" data-corner="sw" aria-label="Réduire ou agrandir"></button>
+            <button type="button" class="handle" data-corner="se" aria-label="Réduire ou agrandir"></button>
+          </div>
+        </div>
+        <div class="name-block" id="meta-ref">
+          <p class="place-name" id="name-ref"></p>
+        </div>
+        <div class="name-block" id="meta-target">
+          <p class="place-name" id="name-target"></p>
+        </div>
+      </div>
+    </div>
+
+    <div id="dock">
+      <div class="dock-card">
+        <p class="round-meta dock-round" id="dock-round">Manche 1 / 5</p>
+        <p class="timeout-note" id="dock-timeout" hidden>Temps écoulé</p>
+        <p class="round-prompt" id="dock-kicker"></p>
+        <p class="round-help" id="dock-help"></p>
+        <p class="result-remark" id="dock-remark" hidden></p>
+        <p class="result-detail" id="dock-detail" hidden></p>
+        <p class="result-areas" id="dock-areas" hidden></p>
+        <p class="reveal-name" id="dock-score" hidden></p>
+        <button type="button" id="btn-validate" class="btn-primary btn-block">Valider</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="finish-modal" class="intro-modal" hidden role="dialog" aria-modal="true" aria-labelledby="finish-title">
+    <div class="intro-card finish-card">
+      <h1 id="finish-title">Partie terminée</h1>
+      <p class="final-score-kicker">Score</p>
+      <p class="final-score" id="final-score">—</p>
+      <ul class="finish-recap" id="finish-recap" aria-label="Bilan des manches"></ul>
+      <button type="button" id="btn-replay" class="btn-primary">Rejouer</button>
+    </div>
+  </div>
+
+  <script src="app.js?v=24"></script>
+</body>
+</html>
