@@ -1,0 +1,8 @@
+name = "a-grande-echelle"
+main = "src/index.js"
+compatibility_date = "2026-11-12"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "a-grande-echelle-scores"
+database_id = "1e5a2705-d570-4eb9-9589-d95502baf9ea"
